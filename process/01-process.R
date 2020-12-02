@@ -16,9 +16,16 @@ ene8 <- haven::read_dta("https://www.ine.cl/docs/default-source/ocupacion-y-deso
 ene9 <- haven::read_dta("https://www.ine.cl/docs/default-source/ocupacion-y-desocupacion/bbdd/2020/stata/ene-2020-09-aso.dta?sfvrsn=3dabbf2d_11&amp;download=true")
 #ene10 <- haven::read_dta("https://www.ine.cl/docs/default-source/ocupacion-y-desocupacion/bbdd/2020/stata/ene-2020-01-jas.dta?sfvrsn=3dabbf2d_11&amp;download=true")
 
+# conglomerado en enero y en septiembre diferentes
+str(ene9$conglomerado)
+ene9$conglomerado <- as.character(ene9$conglomerado)
+#nivel 
+
+# Merge data bases
 ene <- lapply(ls(pattern="ene"), get)
 ene <- Reduce(function(...) merge (..., all = T), ene)
-x <- do.call(cbind, ene)
+#x <- do.call(cbind, ene)
+ene <- plyr::rbind.fill(ene)
 
 # Intento de webscrapping -------------------------------------------------
 #"https://www.ine.cl/docs/default-source/ocupacion-y-desocupacion/bbdd/2020/stata/ene-2020-01-def.dta?sfvrsn=3dabbf2d_11&amp;download=true"
@@ -45,7 +52,6 @@ web %>%
 #   dplyr::filter(!is.na(x))
 
 # 3. Seleccionar variables ------------------------------------------------
-
 ene_proc <- ene %>% 
   select(mes_central, region, r_p_c, tramo_edad, edad, cine,  nivel, nacionalidad, #sociodemograficas
          parentesco, sexo,est_conyugal, proveedor, #sociales importantes
@@ -56,3 +62,10 @@ ene_proc <- ene %>%
         e2, e4, e5_mes, e5_ano, e9, e12, e9_orig, e9_otro_covid, e12_orig, e12_otro_covid, #no buscar empleo , e4 ver 6, e9 (3, 11,14,16), e12 (4, 11)
         fact_cal,
         e24, e24_otro) #motivos renuncia mirar la de 2 (razones de cuidados)  y ver otro x si aparecen ollas comunes
+
+ene_proc <- ene_proc %>% 
+  mutate(date = paste0("1"))
+
+
+# Guardar -----------------------------------------------------------------
+save(ene_proc, ene, file = "output/data/ene2020.RData")
