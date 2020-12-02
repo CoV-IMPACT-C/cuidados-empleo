@@ -63,9 +63,9 @@ ene_proc <- ene %>%
         fact_cal,
         e24, e24_otro) #motivos renuncia mirar la de 2 (razones de cuidados)  y ver otro x si aparecen ollas comunes
 
-ene_proc <- ene_proc %>% 
-  mutate(date = paste0("1"))
-
+x <- ene_proc %>% 
+  mutate(date_text = str_c("1", mes_central, "2020", sep="-"),
+         date = ymd_hm(date_text))
 
 # Guardar -----------------------------------------------------------------
 save(ene_proc, ene, file = "output/data/ene2020.RData")
