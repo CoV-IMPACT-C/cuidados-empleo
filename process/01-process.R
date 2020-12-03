@@ -68,7 +68,23 @@ ene_proc <- ene_proc %>%
          date = dmy(date_text))
 
 
-# 4. Filtros relevantes ---------------------------------------------------
+# 4. Recodificaciones -----------------------------------------------------
+ene_proc <- ene_proc %>% 
+  mutate(tramo_edad = as.numeric(edad),
+         tramo_edad  = case_when(tramo_edad <=18 ~ "15 a 18 años",
+                                 tramo_edad <=19 ~ "19 a 39 años",
+                                 tramo_edad <=40 ~ "40 a 59 años",
+                                 tramo_edad <=60 ~ "60 a 79 años",
+                                 TRUE ~ "80 años o más"),
+         edcine = as.numeric(cine),
+         edcine  = case_when(edcine %in% c(1, 999) ~ "Sin estudios",
+                             edcine %in% c(2,3,4) ~ "Básica y preescolar",
+                             edcine == 5~ "Media",
+                             edcine %in% c(6,7) ~ "Superior",
+                             edcine %in% c(8,9) ~ "Posgrado"))
+
+
+# 5. Proporciones ---------------------------------------------------
 
 # Inactividad
 ene_proc %>% 
@@ -98,7 +114,9 @@ ene_proc %>%
          ocup_form = as_factor(ocup_form),
          sexo = as_factor(sexo))
 
-# Luego hacer por edad y nivel educacional. 
+# Luego hacer por edad y nivel educacional.
+
+
 
 # Guardar -----------------------------------------------------------------
 save(ene_proc, ene, file = "output/data/ene2020.RData")
