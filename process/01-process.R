@@ -1,7 +1,7 @@
 # Code 1: Process ENE -----------------------------------------------------
 
 # 1. Cargar librerias -----------------------------------------------------
-pacman::p_load(tidyverse, xml2)
+pacman::p_load(tidyverse, xml2, lubridate)
 
 # 2. Cargar base de datos -------------------------------------------------
 
@@ -60,12 +60,45 @@ ene_proc <- ene %>%
          starts_with("b7b_"), # derechos sociales (ojo con guarderia que es 3 y 4)
          c5,c6, c7, c8, c9, c12, c9_orig, c9_otro_covid, #sobre carga horario y subempleo / c9 razones (ver 6), c12 (5)
         e2, e4, e5_mes, e5_ano, e9, e12, e9_orig, e9_otro_covid, e12_orig, e12_otro_covid, #no buscar empleo , e4 ver 6, e9 (3, 11,14,16), e12 (4, 11)
-        fact_cal,
+        fact_cal, cae_general, cae_especifico, categoria_ocupacion, activ, sector, ocup_form,
         e24, e24_otro) #motivos renuncia mirar la de 2 (razones de cuidados)  y ver otro x si aparecen ollas comunes
 
-x <- ene_proc %>% 
+ene_proc <- ene_proc %>% 
   mutate(date_text = str_c("1", mes_central, "2020", sep="-"),
-         date = ymd_hm(date_text))
+         date = dmy(date_text))
+
+
+# 4. Filtros relevantes ---------------------------------------------------
+
+# Inactividad
+ene_proc %>% 
+  group_by(date,sexo, activ) %>%
+  filter(!is.na(activ)) %>% 
+  summarise(n = n()) %>% 
+  mutate(prop = round(n / sum(n), 4)*100,
+         activ = as_factor(activ),
+         sexo = as_factor(sexo))
+
+# Cae 
+ene_proc %>% 
+  group_by(date,sexo, cae_especifico) %>%
+  filter(!is.na(cae_especifico)) %>% 
+  summarise(n = n()) %>% 
+  mutate(prop = round(n / sum(n), 4)*100,
+         cae_especifico = as_factor(cae_especifico),
+         sexo = as_factor(sexo)) %>% 
+  filter(cae_especifico %in% c("Razones familiares permanentes (Potencial)","Razones familiares permanentes (Habitual)"))
+
+# Informalidad
+ene_proc %>% 
+  group_by(date,sexo, ocup_form) %>%
+  filter(!is.na(sector)) %>% 
+  summarise(n = n()) %>% 
+  mutate(prop = round(n / sum(n), 4)*100,
+         ocup_form = as_factor(ocup_form),
+         sexo = as_factor(sexo))
+
+# Luego hacer por edad y nivel educacional. 
 
 # Guardar -----------------------------------------------------------------
 save(ene_proc, ene, file = "output/data/ene2020.RData")
