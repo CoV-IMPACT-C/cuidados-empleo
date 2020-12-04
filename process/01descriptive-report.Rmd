@@ -40,7 +40,7 @@ library(knitr);  options(knitr.kable.NA = '')
 
 El presente reporte inicial está desarrollado con la Encuesta Nacional de Empleo, del Instituto Nacional de Estadística. Este instrumento es un diseño panel mensual que durante la pandemia por COVID-19 se ha desarrollado manteniendo su marco muestral representativo y probabilístico, pero realizando las entrevistas vía telefónica para no reducir sus tasas de respuesta. 
 
-A continuación se trabajaron las series temporales desde enero a septiembre (última encuesta disponible). Para iniciar el análisis se muestra un análisis global de la situación de actividad económica, razones familiares para la inactividad (estar fuera de la fuerza de trabajo) y la situación de informalidad. Estos tres principales indicadores son desagregados por sexo. 
+A continuación se trabajaron las series temporales desde enero a septiembre (última encuesta disponible). Para iniciar el análisis se muestra un análisis global de la situación de actividad económica, razones familiares para la inactividad (estar fuera de la fuerza de trabajo) y la situación de informalidad. Estos tres principales indicadores son desagregados por sexo, tramo etario y nivel educacional. 
 
 Luego se incorporará un análisis de
 
